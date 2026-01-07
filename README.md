@@ -1,13 +1,13 @@
 # Trauso (TeraBox Downloader) v2
 
 ![License](https://img.shields.io/github/license/basstimam/trauso)
-![Version](https://img.shields.io/github/v/release/basstimam/trauso)
+![Version](https://img.shields.io/github/v/tag/basstimam/trauso?label=version)
 
 A modern, fast, and robust TeraBox file downloader built with **Tauri v2** (Rust + React). Now faster, lighter, and more reliable.
 
 ![Trauso Screenshot](ss/ss1.png)
 
-## ✨ New Features (v2)
+## ✨ New Features (v0.1.1)
 
 - **🚀 Native Performance**: Built with Rust (Backend) and React (Frontend). Lightweight (~13MB) and blazing fast.
 - **🛡️ Robust Fetch Engine**: 
@@ -28,7 +28,7 @@ A modern, fast, and robust TeraBox file downloader built with **Tauri v2** (Rust
 
 ## 📥 Installation
 
-1. Go to [Releases Page](https://github.com/basstimam/trauso/releases).
+1. Go to [Releases Page](https://github.com/basstimam/trauso/releases/latest).
 2. Download the latest `trauso_setup.exe` (Installer) or `trauso.exe` (Portable).
 3. **Run and Enjoy!** No Python or external dependencies required.
 
