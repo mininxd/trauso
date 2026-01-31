@@ -4,9 +4,10 @@
   "version": "1.0.2",
   "identifier": "com.trauso.cli",
   "build": {
-    "beforeDevCommand": "",
-    "devUrl": "",
-    "beforeBuildCommand": ""
+    "beforeDevCommand": "npm run vite:dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run vite:build",
+    "frontendDist": "../dist"
   },
   "app": {
     "windows": [],
