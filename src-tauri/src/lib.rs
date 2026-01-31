@@ -175,6 +175,79 @@ async fn save_app_settings(handle: tauri::AppHandle, settings: AppSettings) -> R
     save_settings(&handle, &settings)
 }
 
+/// Downloads a file from the given URL
+pub async fn download_from_url(url: &str) {
+    println!("Starting download from: {}", url);
+
+    // Initialize Aria2 client
+    {
+        let client = ARIA2_CLIENT.lock().await;
+        if !client.is_running().await {
+            if let Err(e) = client.start_daemon().await {
+                eprintln!("Failed to start Aria2 daemon: {}", e);
+                return;
+            }
+        }
+    }
+
+    // Add download to Aria2
+    let gid_result = {
+        let client = ARIA2_CLIENT.lock().await;
+        client.add_uri(url.to_string(), None).await
+    };
+
+    match gid_result {
+        Ok(gid) => {
+            println!("Download started with GID: {}", gid);
+
+            // Monitor download progress
+            loop {
+                let status_result = {
+                    let client = ARIA2_CLIENT.lock().await;
+                    client.get_download_info(&gid).await
+                };
+
+                match status_result {
+                    Ok(info) => {
+                        if info.status == "complete" {
+                            println!("Download completed successfully!");
+                            break;
+                        } else if info.status == "error" {
+                            eprintln!("Download failed: {:?}", info.error_code);
+                            break;
+                        } else {
+                            println!(
+                                "Progress: {:.2}% | Status: {} | Speed: {}/s",
+                                info.progress,
+                                info.status,
+                                info.download_speed.unwrap_or(0)
+                            );
+                        }
+                    }
+                    Err(e) => {
+                        eprintln!("Error getting download status: {}", e);
+                        break;
+                    }
+                }
+
+                // Wait a bit before checking again
+                tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+            }
+        }
+        Err(e) => {
+            eprintln!("Failed to start download: {}", e);
+        }
+    }
+
+    // Stop Aria2 daemon
+    {
+        let client = ARIA2_CLIENT.lock().await;
+        if let Err(e) = client.stop_daemon().await {
+            eprintln!("Failed to stop Aria2 daemon: {}", e);
+        }
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
